@@ -1,89 +1,98 @@
 #include <stdio.h>
 #include <string.h>
 
+// Estrutura para armazenar os dados de um país
 typedef struct {
-    char nome[50];
+    char nome[30];
     int populacao;
-    float area;
-    float pib;
-    int pontosTuristicos;
-    float densidadeDemografica;
-} CartaPais;
+    int area;
+    int densidade;
+    int pib;
+    int expectativaVida;
+} Carta;
 
-void compararCartas(CartaPais c1, CartaPais c2, int opcao) {
-    printf("\nComparando %s x %s\n", c1.nome, c2.nome);
-    
-    switch(opcao) {
-        case 1:
-            printf("Nome do país não é um atributo de comparação.\n");
-            break;
-        case 2:
-            printf("População: %d x %d\n", c1.populacao, c2.populacao);
-            if (c1.populacao > c2.populacao)
-                printf("Vencedor: %s\n", c1.nome);
-            else if (c1.populacao < c2.populacao)
-                printf("Vencedor: %s\n", c2.nome);
-            else
-                printf("Empate!\n");
-            break;
-        case 3:
-            printf("Área: %.2f x %.2f\n", c1.area, c2.area);
-            if (c1.area > c2.area)
-                printf("Vencedor: %s\n", c1.nome);
-            else if (c1.area < c2.area)
-                printf("Vencedor: %s\n", c2.nome);
-            else
-                printf("Empate!\n");
-            break;
-        case 4:
-            printf("PIB: %.2f x %.2f\n", c1.pib, c2.pib);
-            if (c1.pib > c2.pib)
-                printf("Vencedor: %s\n", c1.nome);
-            else if (c1.pib < c2.pib)
-                printf("Vencedor: %s\n", c2.nome);
-            else
-                printf("Empate!\n");
-            break;
-        case 5:
-            printf("Pontos Turísticos: %d x %d\n", c1.pontosTuristicos, c2.pontosTuristicos);
-            if (c1.pontosTuristicos > c2.pontosTuristicos)
-                printf("Vencedor: %s\n", c1.nome);
-            else if (c1.pontosTuristicos < c2.pontosTuristicos)
-                printf("Vencedor: %s\n", c2.nome);
-            else
-                printf("Empate!\n");
-            break;
-        case 6:
-            printf("Densidade Demográfica: %.2f x %.2f\n", c1.densidadeDemografica, c2.densidadeDemografica);
-            if (c1.densidadeDemografica < c2.densidadeDemografica)
-                printf("Vencedor: %s\n", c1.nome);
-            else if (c1.densidadeDemografica > c2.densidadeDemografica)
-                printf("Vencedor: %s\n", c2.nome);
-            else
-                printf("Empate!\n");
-            break;
-        default:
-            printf("Opção inválida!\n");
+// Função para exibir o menu de atributos
+void exibirMenuAtributos(int atributoEscolhido) {
+    printf("\nEscolha um atributo:\n");
+
+    if (atributoEscolhido != 1) printf("1 - População\n");
+    if (atributoEscolhido != 2) printf("2 - Área\n");
+    if (atributoEscolhido != 3) printf("3 - Densidade Demográfica\n");
+    if (atributoEscolhido != 4) printf("4 - PIB\n");
+    if (atributoEscolhido != 5) printf("5 - Expectativa de Vida\n");
+}
+
+// Função para retornar o valor do atributo escolhido
+int obterValorAtributo(Carta c, int atributo) {
+    switch (atributo) {
+        case 1: return c.populacao;
+        case 2: return c.area;
+        case 3: return c.densidade;
+        case 4: return c.pib;
+        case 5: return c.expectativaVida;
+        default: return -1;
     }
 }
 
+// Função para comparar dois atributos
+int compararAtributos(int valor1, int valor2, int atributo) {
+    if (atributo == 3) // Densidade: menor vence
+        return (valor1 < valor2) ? 1 : (valor1 > valor2 ? 2 : 0);
+    else // Demais: maior vence
+        return (valor1 > valor2) ? 1 : (valor1 < valor2 ? 2 : 0);
+}
+
 int main() {
-    CartaPais carta1 = {"Brasil", 213000000, 8515767.0, 2.05, 25, 25.0};
-    CartaPais carta2 = {"Japão", 125000000, 377975.0, 5.00, 30, 330.8};
+    // Cartas de exemplo (substitua com seus dados reais)
+    Carta carta1 = {"Brasil", 211000000, 8516000, 25, 2200, 75};
+    Carta carta2 = {"Canadá", 38000000, 9985000, 4, 1700, 82};
 
-    int opcao;
+    int atributo1, atributo2;
 
-    printf("Escolha o atributo para comparação:\n");
-    printf("1 - Nome (não comparável)\n");
-    printf("2 - População\n");
-    printf("3 - Área\n");
-    printf("4 - PIB\n");
-    printf("5 - Pontos Turísticos\n");
-    printf("6 - Densidade Demográfica (vence o menor valor)\n");
-    printf("Digite sua opção: ");
-    scanf("%d", &opcao);
+    // Escolha do primeiro atributo
+    exibirMenuAtributos(0);
+    printf("Escolha o primeiro atributo: ");
+    scanf("%d", &atributo1);
 
-    compararCartas(carta1, carta2, opcao);
+    // Escolha do segundo atributo (menu dinâmico)
+    exibirMenuAtributos(atributo1);
+    printf("Escolha o segundo atributo (diferente do primeiro): ");
+    scanf("%d", &atributo2);
+
+    // Validação de atributos
+    if (atributo1 == atributo2 || atributo1 < 1 || atributo1 > 5 || atributo2 < 1 || atributo2 > 5) {
+        printf("Erro: Atributos inválidos ou repetidos.\n");
+        return 1;
+    }
+
+    // Obter valores dos atributos
+    int valor1A = obterValorAtributo(carta1, atributo1);
+    int valor2A = obterValorAtributo(carta2, atributo1);
+    int valor1B = obterValorAtributo(carta1, atributo2);
+    int valor2B = obterValorAtributo(carta2, atributo2);
+
+    // Comparação individual
+    int resultado1 = compararAtributos(valor1A, valor2A, atributo1);
+    int resultado2 = compararAtributos(valor1B, valor2B, atributo2);
+
+    // Soma dos atributos
+    int soma1 = valor1A + valor1B;
+    int soma2 = valor2A + valor2B;
+
+    // Exibição do resultado
+    printf("\n--- Resultado da Rodada ---\n");
+    printf("Carta 1: %s\n", carta1.nome);
+    printf("Carta 2: %s\n", carta2.nome);
+    printf("Atributo 1: %d x %d\n", valor1A, valor2A);
+    printf("Atributo 2: %d x %d\n", valor1B, valor2B);
+    printf("Soma: %d x %d\n", soma1, soma2);
+
+    if (soma1 > soma2)
+        printf("Vencedor: %s\n", carta1.nome);
+    else if (soma2 > soma1)
+        printf("Vencedor: %s\n", carta2.nome);
+    else
+        printf("Empate!\n");
 
     return 0;
 }
